@@ -1,46 +1,44 @@
-export const dummyCharacters = {
-  c1: {
-    hp: 100,
-    skills: [
-      {
-        s1: {
-          turns: 3,
-          type: "hp-up",
-          hpChange: 10,
-          status: null,
-        },
-      },
-      {
-        s2: {
-          turns: 2,
-          type: "hp-neutral",
-          hpChange: 0,
-          status: { name: "stun", duration: 2 },
-        },
-      },
-    ],
-    baseDamage: 10,
+import { Character } from "../helpers/character";
+
+const skills1 = [
+  {
+    timer: 3,
+    type: "hp-up",
+    skill1: (selectedTarget) => {
+      selectedTarget.hp += 10;
+    },
   },
-  c2: {
-    hp: 100,
-    skills: [
-      {
-        s1: {
-          turns: 3,
-          type: "hp-down",
-          hpChange: -20,
-          status: null,
-        },
-      },
-      {
-        s2: {
-          turns: 2,
-          type: "hp-down",
-          hpChange: -3,
-          status: { name: "poison", duration: 3 },
-        },
-      },
-    ],
-    baseDamage: 12,
+  {
+    timer: 1,
+    type: "hp-neutral",
+    skill2: (selectedTarget) => {
+      selectedTarget.statusDebuff = "stun";
+      return { duration: 2, hp: 0 };
+    },
   },
-};
+];
+
+const skills2 = [
+  {
+    timer: 3,
+    type: "hp-down",
+    skill1: (selectedTarget) => {
+      selectedTarget.hp -= 20;
+    },
+  },
+  {
+    timer: 2,
+    type: "hp-down",
+    skill2: (selectedTarget) => {
+      selectedTarget.statusDebuff = "poison";
+      return { duration: 3, hp: -3 };
+    },
+  },
+];
+
+const char1 = new Character(1, 100, 5, skills1, 10, 0);
+
+export const dummyCharacters = [
+  char1,
+  new Character(2, 100, 6, skills2, 12, 0),
+];

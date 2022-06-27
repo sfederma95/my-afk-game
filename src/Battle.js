@@ -1,8 +1,18 @@
 import React, { useEffect, useState } from "react";
 import Mountains from "./img/bgs/mountains.png";
 import { dummyCharacters } from "./temp/characters";
+import { Battles } from "./helpers/battle";
 
 export const Battle = () => {
+  const [battle, setBattle] = useState(null);
+  useEffect(() => {
+    setBattle(new Battles(dummyCharacters));
+  }, []);
+  const doBattle = () => {
+    if (battle) {
+      battle.init();
+    }
+  };
   return (
     <div
       className="container"
@@ -15,7 +25,7 @@ export const Battle = () => {
         height: "100%",
       }}
     >
-      <button>Start</button>
+      <button onClick={doBattle}>Start</button>
     </div>
   );
 };
