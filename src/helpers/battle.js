@@ -18,63 +18,59 @@ class MoveQueue {
 }
 
 export class Battles {
-  constructor(combatants) {
-    this.combatants = combatants;
+  constructor(team1, team2) {
+    this.teamOne = team1;
+    this.teamTwo = team2;
     this.turns = 1;
     this.moveQueue = new MoveQueue();
   }
 
   init() {
-    while (this.combatants[0].hp > 0 && this.combatants[1].hp > 0) {
-      this.queueUpTurn();
-      this.doTurn();
+    while (
+      this.teamOne.alivePlayers.length &&
+      this.teamTwo.alivePlayers.length
+    ) {
+      console.log("turns", this.turns);
+      console.log("player1 turn");
+      for (let i = 0; i < this.teamOne.alivePlayers.length; i++) {
+        this.doTurn(this.teamOne.alivePlayers[i], this.teamTwo);
+      }
+      console.log("player2 turn");
+      for (let i = 0; i < this.teamTwo.alivePlayers.length; i++) {
+        this.doTurn(this.teamTwo.alivePlayers[i], this.teamOne);
+      }
+      this.turns++;
     }
-    console.log(
-      //   this.combatants.filter((character) => {
-      //     return character.hp > 0;
-      //   })
-      this.combatants
-    );
+    console.log(this.teamOne, this.teamTwo);
   }
 
-  queueUpTurn() {
-    for (let i = 0; i < this.combatants.length; i++) {
-      // Based on turn should queue a skill if proc
-      const targets = this.combatants.filter((other, index) => {
-        return index !== i;
-      });
-      //   Should not queue basic attack if time for skill usage instead
-      if (this.combatants[i].statusDebuff !== "stun") {
-        // const skillsToQ = this.combatants[i].skills.filter((skill, index) => {
-        //   return (
-        //     this.turns % (this.combatants[i].skills[index].timer + 1) === 0
-        //   );
-        // });
-        // console.log(skillsToQ);
-        // if (skillsToQ) {
-        //     this.moveQueue.addMove()
-        // }
-        this.moveQueue.addMove([
-          Character.basicAttack,
-          this.combatants[i],
-          targets[0],
-        ]);
+  queuePlayerSkills(currentPlayer) {
+    for (let i = 0; i < currentPlayer.skills.length; i++) {
+      if (this.turns % (currentPlayer.skills[i].timer + 1) === 0) {
+        this.moveQueue.addMove(currentPlayer.skills[i]);
+        console.log(currentPlayer.skills[i]);
       }
     }
   }
 
   /* Situationn of status debuff of originating character? */
-  doTurn() {
-    let index = 0;
-    while (index < this.moveQueue.length) {
-      const [move, originatingChar, target] = this.moveQueue.queue[index];
-      if (originatingChar.statusDebuff !== "stun") {
-        this.moveQueue.unqueueMove();
-        move(originatingChar, target);
-      } else index++;
-      console.log("hp", target.hp);
+  doTurn(currentPlayer, enemyTeam) {
+    const targetIndex = Math.floor(
+      Math.random() * enemyTeam.alivePlayers.length
+    );
+    const target = enemyTeam.alivePlayers[targetIndex];
+    // this.queuePlayerSkills(currentPlayer);
+    // if (currentPlayer.statusDebuff !== "stun") {
+    //   if (!this.moveQueue.length) {
+    //     Character.basicAttack(currentPlayer, target);
+    //   } else {
+    //     this.moveQueue.unqueueMove();
+    //   }
+    // }
+    Character.basicAttack(currentPlayer, target);
+    if (target.hp <= 0) {
+      enemyTeam.deadPlayers.push(target);
+      enemyTeam.alivePlayers.splice(targetIndex, 1);
     }
-    this.turns++;
-    console.log("turns", this.turns);
   }
 }

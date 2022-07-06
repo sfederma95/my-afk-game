@@ -11,8 +11,11 @@ export class Character {
 
   static basicAttack(fromCharacter, selectedTarget) {
     console.log(
-      `Attacking ${selectedTarget.id} for ${fromCharacter.baseDamage}`
+      `${fromCharacter.id} attacking ${selectedTarget.id} for ${fromCharacter.baseDamage}`
     );
     selectedTarget.hp -= fromCharacter.baseDamage;
+    if (selectedTarget.hp <= 0) {
+      console.log(`${selectedTarget.id} has died`);
+    }
   }
 }

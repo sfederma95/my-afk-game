@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 import Mountains from "./img/bgs/mountains.png";
-import { dummyCharacters } from "./temp/characters";
+import { dummyTeam } from "./temp/characters";
 import { Battles } from "./helpers/battle";
 
 export const Battle = () => {
   const [battle, setBattle] = useState(null);
   useEffect(() => {
-    setBattle(new Battles(dummyCharacters));
+    if (!battle) {
+      const [team1, team2] = dummyTeam;
+      setBattle(new Battles(team1, team2));
+    }
   }, []);
   const doBattle = () => {
-    if (battle) {
-      battle.init();
-    }
+    battle.init();
+    setBattle(null);
   };
   return (
     <div
